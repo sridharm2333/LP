@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lonely Penguin – UI Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 32px 16px;
+    gap: 24px;
+  }
+
+  h1 {
+    color: #94a3b8;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .theme-toggle {
+    display: flex;
+    background: #1e293b;
+    border-radius: 99px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .theme-btn {
+    padding: 8px 18px;
+    border-radius: 99px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    color: #94a3b8;
+    background: transparent;
+  }
+
+  .theme-btn.active {
+    background: #2b6cb0;
+    color: #fff;
+  }
+
+  body.midnight .theme-btn.active-midnight {
+    background: #38bdf8;
+    color: #0f172a;
+  }
+
+  /* Phone frame */
+  .phone-wrap {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .phone {
+    width: 375px;
+    height: 812px;
+    border-radius: 48px;
+    border: 10px solid #1e293b;
+    box-shadow: 0 0 0 2px #334155, 0 32px 64px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg);
+    transition: background 0.3s;
+  }
+
+  /* Notch */
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 28px;
+    background: #1e293b;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 44px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 24px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    flex-shrink: 0;
+    z-index: 5;
+  }
+
+  /* Screen */
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .screen.active { display: flex; }
+
+  /* Bottom tab bar */
+  .tab-bar {
+    height: 80px;
+    display: flex;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding-bottom: 16px;
+    flex-shrink: 0;
+  }
+
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 4px;
+    transition: opacity 0.15s;
+  }
+
+  .tab .icon { font-size: 22px; }
+
+  .tab .label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .tab.active .label { color: var(--primary); }
+  .tab.active .icon { filter: none; }
+
+  /* Light theme */
+  .phone.light {
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --text: #1a202c;
+    --text-secondary: #718096;
+    --primary: #2b6cb0;
+    --warmth: #c53030;
+    --border: #e2e8f0;
+  }
+
+  /* Midnight theme */
+  .phone.midnight {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --text: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --primary: #38bdf8;
+    --warmth: #fb7185;
+    --border: #334155;
+  }
+
+  /* ── FEED SCREEN ── */
+  .screen-header {
+    padding: 16px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .screen-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .screen-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 0 20px 12px;
+  }
+
+  .post-card {
+    margin: 6px 16px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .post-author {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  .post-content {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .post-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .emotion-tags {
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .mood-emoji { font-size: 14px; }
+
+  .post-date {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-left: auto;
+  }
+
+  .warmth-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: 1px solid var(--warmth);
+    color: var(--warmth);
+    border-radius: 99px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .warmth-btn:hover, .warmth-btn.active {
+    background: var(--warmth);
+    color: #fff;
+  }
+
+  .fab {
+    position: absolute;
+    right: 16px;
+    bottom: 20px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 99px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    z-index: 5;
+  }
+
+  /* ── COMPANION SCREEN ── */
+  .companion-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    gap: 0;
+  }
+
+  .companion-penguin {
+    font-size: 72px;
+    margin-bottom: 16px;
+    animation: sway 3s ease-in-out infinite;
+  }
+
+  @keyframes sway {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(4deg); }
+  }
+
+  .companion-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .companion-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .action-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    margin-bottom: 12px;
+    transition: opacity 0.15s;
+  }
+
+  .action-btn:active { opacity: 0.8; }
+
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border) !important; color: var(--text); }
+
+  .message-box {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 16px;
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .message-text {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  /* ── JOURNEY SCREEN ── */
+  .timeline {
+    padding: 0 16px 16px;
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 32px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .timeline-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    z-index: 1;
+    border: 2px solid var(--bg);
+  }
+
+  .timeline-card {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  /* ── GROUPS SCREEN ── */
+  .group-card {
+    margin: 6px 16px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .group-card:active { opacity: 0.7; }
+
+  .group-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .group-info { flex: 1; }
+
+  .group-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .group-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .group-join {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .group-join.joined {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  /* ── PENGUIN CIRCLE SCREEN ── */
+  .circle-screen {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .circle-banner {
+    background: linear-gradient(135deg, #1e3a5f, #0f2a4a);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .circle-banner.midnight-banner {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid #334155;
+  }
+
+  .circle-emoji { font-size: 36px; margin-bottom: 8px; }
+
+  .circle-banner-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .circle-banner-text {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  .active-circle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  .circle-status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #34d399;
+    flex-shrink: 0;
+  }
+
+  .status-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .circle-member-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .member-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  /* ── CREATE POST ── */
+  .create-screen {
+    flex: 1;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .create-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .create-textarea {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    color: var(--text);
+    resize: none;
+    width: 100%;
+    min-height: 120px;
+    font-family: inherit;
+    line-height: 1.6;
+  }
+
+  .create-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .emotion-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+  }
+
+  .chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .mood-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .mood-option {
+    flex: 1;
+    text-align: center;
+    font-size: 22px;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    transition: all 0.15s;
+  }
+
+  .mood-option.selected {
+    border-color: var(--primary);
+    background: var(--primary);
+    transform: scale(1.1);
+  }
+
+  .anon-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .toggle-track {
+    width: 40px; height: 22px;
+    border-radius: 99px;
+    background: var(--border);
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle-track.on { background: var(--primary); }
+
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .toggle-track.on .toggle-thumb { transform: translateX(18px); }
+
+  .toggle-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .toggle-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-left: auto;
+  }
+
+  /* screen nav indicator */
+  .screen-nav {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #334155;
+    transition: background 0.2s;
+  }
+
+  .nav-dot.active { background: #38bdf8; }
+
+  /* Midnight ocean wave bg */
+  .midnight-wave {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 120px;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0.15;
+  }
+
+  .midnight-wave svg { width: 100%; height: 100%; }
+
+  /* Grounding banner */
+  .grounding-banner {
+    margin: 8px 16px;
+    background: linear-gradient(135deg, #1a4a2e, #166534);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .grounding-icon { font-size: 20px; flex-shrink: 0; }
+
+  .grounding-text {
+    font-size: 13px;
+    color: #bbf7d0;
+    line-height: 1.5;
+  }
+
+  /* Kindness score */
+  .kindness-row {
+    display: flex;
+    gap: 12px;
+    margin: 0 16px 8px;
+  }
+
+  .kindness-card {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .kindness-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .kindness-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* Login screen */
+  .login-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 0;
+  }
+
+  .login-logo {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  .login-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .login-tagline {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  .input-field {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 14px;
+    font-size: 15px;
+    color: var(--text);
+    font-family: inherit;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .login-btn {
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: opacity 0.15s;
+  }
+
+  .login-link {
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .login-link span { color: var(--primary); font-weight: 600; }
+
+  /* Profile screen */
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    gap: 8px;
+  }
+
+  .avatar-circle {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 4px;
+  }
+
+  .profile-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .profile-since {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .setting-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .setting-icon { font-size: 18px; width: 28px; text-align: center; }
+  .setting-label { font-size: 15px; color: var(--text); flex: 1; }
+  .setting-arrow { font-size: 12px; color: var(--text-secondary); }
+  .setting-value { font-size: 13px; color: var(--text-secondary); }
+
+  /* Scrollbar */
+  .screen::-webkit-scrollbar { width: 0; }
+
+  /* Bottom nav label */
+  .screen-label {
+    position: absolute;
+    top: 52px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Page selector below phone */
+  .page-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-btn {
+    padding: 7px 16px;
+    border-radius: 99px;
+    border: 1.5px solid #334155;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .page-btn:hover { border-color: #38bdf8; color: #38bdf8; }
+  .page-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; font-weight: 700; }
+
+  footer {
+    font-size: 11px;
+    color: #334155;
+    text-align: center;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🐧 Lonely Penguin — UI Preview</h1>
+
+<div class="controls">
+  <div class="theme-toggle">
+    <button class="theme-btn active" id="btn-light" onclick="setTheme('light')">☀️ Light</button>
+    <button class="theme-btn" id="btn-midnight" onclick="setTheme('midnight')">🌊 Midnight Ocean</button>
+  </div>
+</div>
+
+<div class="page-btns">
+  <button class="page-btn active" onclick="goScreen('login')">Login</button>
+  <button class="page-btn" onclick="goScreen('feed')">Feed</button>
+  <button class="page-btn" onclick="goScreen('create')">Create Post</button>
+  <button class="page-btn" onclick="goScreen('companion')">Companion</button>
+  <button class="page-btn" onclick="goScreen('journey')">Journey</button>
+  <button class="page-btn" onclick="goScreen('groups')">Groups</button>
+  <button class="page-btn" onclick="goScreen('circle')">Penguin Circle</button>
+  <button class="page-btn" onclick="goScreen('profile')">Profile</button>
+</div>
+
+<div class="phone-wrap">
+  <div class="phone light" id="phone">
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>●●●●&nbsp; 📶 🔋</span>
+    </div>
+
+    <!-- ── LOGIN ── -->
+    <div class="screen active" id="screen-login">
+      <div class="login-screen">
+        <div class="login-logo">🐧</div>
+        <div class="login-title">Lonely Penguin</div>
+        <div class="login-tagline">A safe space for loneliness,<br>heartbreak & healing</div>
+        <input class="input-field" placeholder="Email address" type="email" />
+        <input class="input-field" placeholder="Password" type="password" />
+        <button class="login-btn" onclick="goScreen('feed')">Sign in</button>
+        <div class="login-link">Don't have an account? <span onclick="goScreen('feed')">Create one</span></div>
+      </div>
+    </div>
+
+    <!-- ── FEED ── -->
+    <div class="screen" id="screen-feed">
+      <div class="screen-header">
+        <div class="screen-title">🐧 Feed</div>
+        <span style="font-size:11px;color:var(--text-secondary)">Supportive · Safe</span>
+      </div>
+
+      <div class="grounding-banner">
+        <div class="grounding-icon">🌿</div>
+        <div class="grounding-text">If you're struggling right now, take a breath. You're not alone — this community is here for you.</div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="post-card">
+        <div class="post-author">Anonymous</div>
+        <div class="post-content">I haven't spoken to anyone in three days. Not sure why I'm writing this, but it feels less heavy now that I did.</div>
+        <div class="post-footer">
+          <span class="emotion-tags">loneliness · isolation</span>
+          <span class="mood-emoji">😔</span>
+          <button class="warmth-btn" onclick="this.classList.toggle('active')">🤍 Warmth <span>12</span></button>
+          <span class="post-date">Mar 6</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-author">Maya R.</div>
+        <div class="post-content">Six months since the breakup. Some days I forget, and then I remember all at once. Progress is strange.</div>
+        <div class="post-footer">
+          <span class="emotion-tags">heartbreak · healing</span>
+          <span class="mood-emoji">🌱</span>
+          <button class="warmth-btn active" onclick="this.classList.toggle('active')">🤍 Warmth <span>28</span></button>
+          <span class="post-date">Mar 6</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-author">Anonymous</div>
+        <div class="post-content">Lost my dad two months ago. The hardest part is still reaching for my phone to call him.</div>
+        <div class="post-footer">
+          <span class="emotion-tags">grief · loss</span>
+          <span class="mood-emoji">💙</span>
+          <button class="warmth-btn" onclick="this.classList.toggle('active')">🤍 Warmth <span>54</span></button>
+          <span class="post-date">Mar 5</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-author">Sam T.</div>
+        <div class="post-content">Finally went outside today. Just for 20 minutes. But I went.</div>
+        <div class="post-footer">
+          <span class="emotion-tags">progress · anxiety</span>
+          <span class="mood-emoji">🌤️</span>
+          <button class="warmth-btn" onclick="this.classList.toggle('active')">🤍 Warmth <span>89</span></button>
+          <span class="post-date">Mar 5</span>
+        </div>
+      </div>
+
+      <div style="height:80px"></div>
+      <button class="fab" onclick="goScreen('create')">+ Post</button>
+    </div>
+
+    <!-- ── CREATE POST ── -->
+    <div class="screen" id="screen-create">
+      <div class="screen-header">
+        <div class="screen-title">New Post</div>
+        <button style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer" onclick="goScreen('feed')">Share</button>
+      </div>
+
+      <div class="create-screen">
+        <div>
+          <div class="create-label">How are you feeling?</div>
+          <textarea class="create-textarea" placeholder="Share what's on your heart… No judgement here."></textarea>
+        </div>
+
+        <div>
+          <div class="create-label">Emotion tags</div>
+          <div class="emotion-chips">
+            <button class="chip selected" onclick="this.classList.toggle('selected')">loneliness</button>
+            <button class="chip" onclick="this.classList.toggle('selected')">heartbreak</button>
+            <button class="chip" onclick="this.classList.toggle('selected')">grief</button>
+            <button class="chip" onclick="this.classList.toggle('selected')">anxiety</button>
+            <button class="chip" onclick="this.classList.toggle('selected')">healing</button>
+            <button class="chip" onclick="this.classList.toggle('selected')">hope</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="create-label">Mood</div>
+          <div class="mood-row">
+            <div class="mood-option" onclick="selectMood(this)">😢</div>
+            <div class="mood-option selected" onclick="selectMood(this)">😔</div>
+            <div class="mood-option" onclick="selectMood(this)">😐</div>
+            <div class="mood-option" onclick="selectMood(this)">🙂</div>
+            <div class="mood-option" onclick="selectMood(this)">😊</div>
+          </div>
+        </div>
+
+        <div class="anon-toggle" onclick="toggleAnon(this)">
+          <div class="toggle-track on" id="anon-track">
+            <div class="toggle-thumb"></div>
+          </div>
+          <div>
+            <div class="toggle-label">Post anonymously</div>
+          </div>
+          <div class="toggle-sub">Recommended</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMPANION ── -->
+    <div class="screen" id="screen-companion">
+      <div class="companion-center">
+        <div class="companion-penguin">🐧</div>
+        <div class="companion-title">Penguin Companion</div>
+        <div class="companion-sub">Gentle check-ins and encouragement</div>
+
+        <div class="message-box">
+          <div class="message-text">"You've been showing up every day, even when it's hard. That takes more courage than you know."</div>
+        </div>
+
+        <div class="streak-badge">🔥 7-day streak &nbsp;·&nbsp; Keep going</div>
+
+        <button class="action-btn btn-primary" onclick="cycleMessage(this)">Get a message</button>
+        <button class="action-btn btn-outline" onclick="goScreen('circle')">Penguin Circle (distress support)</button>
+        <button class="action-btn btn-outline" onclick="checkIn(this)">Daily check-in</button>
+      </div>
+    </div>
+
+    <!-- ── JOURNEY ── -->
+    <div class="screen" id="screen-journey">
+      <div style="padding:16px 20px 0">
+        <div class="screen-title">Your Journey</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin:4px 0 20px">Chronological timeline of your healing</div>
+      </div>
+
+      <div class="kindness-row">
+        <div class="kindness-card">
+          <div class="kindness-num">142</div>
+          <div class="kindness-label">Kindness Points</div>
+        </div>
+        <div class="kindness-card">
+          <div class="kindness-num" style="color:var(--warmth)">23</div>
+          <div class="kindness-label">Warmth Given</div>
+        </div>
+        <div class="kindness-card">
+          <div class="kindness-num">7</div>
+          <div class="kindness-label">Day Streak</div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot">😊</div>
+          <div class="timeline-card">
+            <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px">Mar 6, 2026</div>
+            <div style="font-size:14px;color:var(--text);line-height:1.4">Finally went outside today. Just for 20 minutes. But I went.</div>
+            <div style="font-size:11px;color:var(--primary);margin-top:6px">healing · progress</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">😔</div>
+          <div class="timeline-card">
+            <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px">Mar 4, 2026</div>
+            <div style="font-size:14px;color:var(--text);line-height:1.4">Still can't sleep before 3am. Everything feels so loud at night.</div>
+            <div style="font-size:11px;color:var(--primary);margin-top:6px">anxiety · loneliness</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">💙</div>
+          <div class="timeline-card">
+            <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px">Mar 2, 2026</div>
+            <div style="font-size:14px;color:var(--text);line-height:1.4">One month since the breakup. I didn't cry today.</div>
+            <div style="font-size:11px;color:var(--primary);margin-top:6px">heartbreak · milestone</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">😢</div>
+          <div class="timeline-card">
+            <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px">Feb 28, 2026</div>
+            <div style="font-size:14px;color:var(--text);line-height:1.4">First post here. Not sure what I'm doing but I needed somewhere to put this.</div>
+            <div style="font-size:11px;color:var(--primary);margin-top:6px">loneliness</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+    </div>
+
+    <!-- ── GROUPS ── -->
+    <div class="screen" id="screen-groups">
+      <div class="screen-header">
+        <div class="screen-title">Community</div>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);padding:0 20px 16px">Find your people. Topic-based safe spaces.</div>
+
+      <div class="group-card">
+        <div class="group-icon">💔</div>
+        <div class="group-info">
+          <div class="group-name">Heartbreak</div>
+          <div class="group-desc">Processing love, loss & starting over</div>
+        </div>
+        <button class="group-join joined">Joined</button>
+      </div>
+
+      <div class="group-card">
+        <div class="group-icon">🕊️</div>
+        <div class="group-info">
+          <div class="group-name">Grief & Loss</div>
+          <div class="group-desc">Holding space for those we've lost</div>
+        </div>
+        <button class="group-join" onclick="this.textContent='Joined';this.classList.add('joined')">Join</button>
+      </div>
+
+      <div class="group-card">
+        <div class="group-icon">🌧️</div>
+        <div class="group-info">
+          <div class="group-name">Loneliness</div>
+          <div class="group-desc">You don't have to be alone in this</div>
+        </div>
+        <button class="group-join" onclick="this.textContent='Joined';this.classList.add('joined')">Join</button>
+      </div>
+
+      <div class="group-card">
+        <div class="group-icon">😰</div>
+        <div class="group-info">
+          <div class="group-name">Anxiety & Overwhelm</div>
+          <div class="group-desc">Breathing through the hard days</div>
+        </div>
+        <button class="group-join" onclick="this.textContent='Joined';this.classList.add('joined')">Join</button>
+      </div>
+
+      <div class="group-card">
+        <div class="group-icon">🌱</div>
+        <div class="group-info">
+          <div class="group-name">Recovery & Healing</div>
+          <div class="group-desc">Small wins, big journeys</div>
+        </div>
+        <button class="group-join" onclick="this.textContent='Joined';this.classList.add('joined')">Join</button>
+      </div>
+
+      <div style="height:20px"></div>
+    </div>
+
+    <!-- ── PENGUIN CIRCLE ── -->
+    <div class="screen" id="screen-circle">
+      <div class="circle-screen">
+        <div class="circle-banner midnight-banner">
+          <div class="circle-emoji">🔵</div>
+          <div class="circle-banner-title">Penguin Circle</div>
+          <div class="circle-banner-text">When you need more support, a small circle of kind community members (5–10 people) can be formed just for you. It dissolves after 24 hours.</div>
+        </div>
+
+        <button class="action-btn btn-primary">Request support circle</button>
+
+        <div class="active-circle-card">
+          <div class="circle-status-row">
+            <div class="status-dot"></div>
+            <div class="status-label">Your circle is active</div>
+            <span style="font-size:11px;color:var(--text-secondary);margin-left:auto">Expires in 18h</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">7 members are with you right now</div>
+          <div class="circle-member-row">
+            <div class="member-avatar">🐧</div>
+            <div class="member-avatar" style="background:#0d9488">🤍</div>
+            <div class="member-avatar" style="background:#7c3aed">🌸</div>
+            <div class="member-avatar" style="background:#b45309">🌿</div>
+            <div class="member-avatar" style="background:#be185d">💙</div>
+            <div class="member-avatar" style="background:#0369a1">⭐</div>
+            <div class="member-avatar" style="background:#15803d">🤗</div>
+          </div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:12px;line-height:1.5">All members have 100+ kindness points and have consented to support others in distress.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE ── -->
+    <div class="screen" id="screen-profile">
+      <div class="profile-header">
+        <div class="avatar-circle">🐧</div>
+        <div class="profile-name">Maya R.</div>
+        <div class="profile-since">Member since January 2026 · 142 kindness points</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="setting-row" onclick="toggleThemeFromProfile()">
+        <div class="setting-icon">🌊</div>
+        <div class="setting-label">Midnight Ocean Mode</div>
+        <div class="setting-value" id="ocean-mode-val">Off</div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-icon">🔔</div>
+        <div class="setting-label">Notifications</div>
+        <div class="setting-value">On</div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-icon">🔒</div>
+        <div class="setting-label">Privacy settings</div>
+        <div class="setting-arrow">›</div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-icon">📖</div>
+        <div class="setting-label">Book of Becoming</div>
+        <div class="setting-arrow">›</div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-icon">🎨</div>
+        <div class="setting-label">Calm Packs</div>
+        <div style="font-size:10px;background:var(--primary);color:#fff;border-radius:4px;padding:2px 6px;font-weight:700">PRO</div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-icon">🛡️</div>
+        <div class="setting-label">Safety resources</div>
+        <div class="setting-arrow">›</div>
+      </div>
+      <div class="setting-row" style="color:#ef4444">
+        <div class="setting-icon">🚪</div>
+        <div class="setting-label" style="color:#ef4444">Sign out</div>
+      </div>
+    </div>
+
+    <!-- Tab bar (hidden on login) -->
+    <div class="tab-bar" id="tab-bar">
+      <div class="tab active" id="tab-feed" onclick="goScreen('feed')">
+        <div class="icon">🏠</div>
+        <div class="label">Feed</div>
+      </div>
+      <div class="tab" id="tab-journey" onclick="goScreen('journey')">
+        <div class="icon">📅</div>
+        <div class="label">Journey</div>
+      </div>
+      <div class="tab" id="tab-companion" onclick="goScreen('companion')">
+        <div class="icon">🐧</div>
+        <div class="label">Companion</div>
+      </div>
+      <div class="tab" id="tab-groups" onclick="goScreen('groups')">
+        <div class="icon">👥</div>
+        <div class="label">Groups</div>
+      </div>
+      <div class="tab" id="tab-profile" onclick="goScreen('profile')">
+        <div class="icon">👤</div>
+        <div class="label">Profile</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Built from the actual source code · React Native / Expo · MongoDB backend</footer>
+
+<script>
+  let currentTheme = 'light';
+  let currentScreen = 'login';
+
+  const tabMap = {
+    feed: 'tab-feed',
+    journey: 'tab-journey',
+    companion: 'tab-companion',
+    groups: 'tab-groups',
+    profile: 'tab-profile',
+    create: 'tab-feed',
+    circle: 'tab-companion',
+  };
+
+  function goScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    if (tabMap[name]) document.getElementById(tabMap[name])?.classList.add('active');
+
+    const tabBar = document.getElementById('tab-bar');
+    tabBar.style.display = name === 'login' ? 'none' : 'flex';
+
+    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page-btn').forEach(b => {
+      if (b.getAttribute('onclick')?.includes("'" + name + "'")) b.classList.add('active');
+    });
+
+    currentScreen = name;
+  }
+
+  function setTheme(t) {
+    currentTheme = t;
+    const phone = document.getElementById('phone');
+    phone.classList.remove('light', 'midnight');
+    phone.classList.add(t);
+
+    document.getElementById('btn-light').classList.toggle('active', t === 'light');
+    document.getElementById('btn-midnight').classList.toggle('active', t === 'midnight');
+
+    const val = document.getElementById('ocean-mode-val');
+    if (val) val.textContent = t === 'midnight' ? 'On' : 'Off';
+  }
+
+  function toggleThemeFromProfile() {
+    setTheme(currentTheme === 'midnight' ? 'light' : 'midnight');
+  }
+
+  const messages = [
+    '"You've been showing up every day, even when it\'s hard. That takes more courage than you know."',
+    '"It\'s okay to not be okay. Healing isn\'t linear, and you\'re still moving forward."',
+    '"You reached out today. That matters more than you realise."',
+    '"Even on your hardest days, you haven\'t given up. I see that."',
+  ];
+  let msgIdx = 0;
+
+  function cycleMessage(btn) {
+    msgIdx = (msgIdx + 1) % messages.length;
+    const box = btn.closest('.companion-center').querySelector('.message-text');
+    box.textContent = messages[msgIdx];
+  }
+
+  function checkIn(btn) {
+    btn.textContent = '✅ Checked in today!';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+  }
+
+  function selectMood(el) {
+    el.closest('.mood-row').querySelectorAll('.mood-option').forEach(m => m.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleAnon(el) {
+    const track = document.getElementById('anon-track');
+    track.classList.toggle('on');
+  }
+
+  // Init
+  goScreen('login');
+</script>
+</body>
+</html>
