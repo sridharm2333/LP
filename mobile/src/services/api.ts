@@ -25,15 +25,21 @@ export async function api<T>(
 
 export const authApi = {
   login: (email: string, password: string) =>
-    api<{ token: string; user: { id: string; displayName: string } }>('/auth/login', {
+    api<{ token: string; user: { id: string; username: string } }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
       skipAuth: true,
     }),
-  register: (email: string, password: string, displayName: string) =>
-    api<{ token: string; user: { id: string; displayName: string } }>('/auth/register', {
+  register: (email: string, password: string) =>
+    api<{ token: string; user: { id: string; username: string } }>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ email, password, displayName }),
+      body: JSON.stringify({ email, password }),
+      skipAuth: true,
+    }),
+  oauth: (provider: 'google' | 'apple', oauthId: string, email: string) =>
+    api<{ token: string; user: { id: string; username: string } }>('/auth/oauth', {
+      method: 'POST',
+      body: JSON.stringify({ provider, oauthId, email }),
       skipAuth: true,
     }),
 };
@@ -80,10 +86,24 @@ export const penguinCircleApi = {
 
 export const userApi = {
   getProfile: () => api<UserProfile>('/user/profile'),
-  updateProfile: (body: { displayName?: string; midnightOceanEnabled?: boolean }) =>
+  updateProfile: (body: { midnightOceanEnabled?: boolean }) =>
     api<UserProfile>('/user/profile', { method: 'PATCH', body: JSON.stringify(body) }),
   companionMessage: () => api<{ message: string }>('/user/companion-message'),
   checkIn: () => api<{ streak: number }>('/user/check-in', { method: 'POST' }),
+  guidedPrompts: () => api<{ prompts: string[] }>('/user/guided-prompts'),
+  softExit: () => api<{ message: string; deletionDate: string }>('/user/soft-exit', { method: 'POST' }),
+  cancelExit: () => api<{ message: string }>('/user/cancel-exit', { method: 'POST' }),
+};
+
+export const peerMatchApi = {
+  request: (sharedTag: string) =>
+    api<{ match: PeerMatch }>('/peer-match/request', { method: 'POST', body: JSON.stringify({ sharedTag }) }),
+  my: () => api<{ match: PeerMatch | null }>('/peer-match/my'),
+  end: (matchId: string) => api<{ ok: boolean }>(`/peer-match/${matchId}/end`, { method: 'POST' }),
+};
+
+export const moderationApi = {
+  myLog: () => api<{ logs: ModerationLogEntry[] }>('/moderation/my'),
 };
 
 export const reportsApi = {
@@ -91,13 +111,15 @@ export const reportsApi = {
     api<{ message: string }>('/reports', { method: 'POST', body: JSON.stringify(body) }),
 };
 
+// ── Types ────────────────────────────────────────────────────────────────────
+
 export interface Post {
   _id: string;
   content: string;
   isAnonymous?: boolean;
   emotionTags?: string[];
   moodEmoji?: string;
-  authorName?: string;
+  authorUsername?: string;
   createdAt: string;
 }
 
@@ -105,7 +127,7 @@ export interface Comment {
   _id: string;
   content: string;
   warmthCount: number;
-  authorId?: { displayName?: string };
+  authorId?: { username?: string };
   createdAt: string;
 }
 
@@ -128,11 +150,28 @@ export interface PenguinCircle {
   expiresAt: string;
 }
 
+export interface PeerMatch {
+  _id: string;
+  status: 'pending' | 'active' | 'ended';
+  sharedTag: string;
+  endsAt?: string;
+}
+
+export interface ModerationLogEntry {
+  _id: string;
+  action: string;
+  reason: string;
+  appealAllowed: boolean;
+  appealDeadline?: string;
+  createdAt: string;
+}
+
 export interface UserProfile {
   _id: string;
   email: string;
-  displayName: string;
+  username: string;
   kindnessScore: number;
   postingStreakDays: number;
   midnightOceanEnabled: boolean;
+  softExitRequestedAt?: string;
 }

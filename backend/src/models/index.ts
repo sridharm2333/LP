@@ -8,3 +8,5 @@ export { GroupPost } from './GroupPost';
 export { PenguinCircle } from './PenguinCircle';
 export { Report } from './Report';
 export { KindnessLog } from './KindnessLog';
+export { PeerMatch } from './PeerMatch';
+export { ModerationLog } from './ModerationLog';

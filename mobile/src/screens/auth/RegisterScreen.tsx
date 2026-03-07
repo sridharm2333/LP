@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, Alert, ActivityIndicator,
+} from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { authApi } from '../../services/api';
@@ -9,11 +12,11 @@ export default function RegisterScreen({ navigation }: { navigation: { navigate:
   const { setToken } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [assignedUsername, setAssignedUsername] = useState<string | null>(null);
 
   const handleRegister = async () => {
-    if (!email.trim() || !password || !displayName.trim()) {
+    if (!email.trim() || !password) {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
@@ -23,28 +26,43 @@ export default function RegisterScreen({ navigation }: { navigation: { navigate:
     }
     setLoading(true);
     try {
-      const res = await authApi.register(email.trim(), password, displayName.trim());
-      await setToken(res.token);
+      const res = await authApi.register(email.trim(), password);
+      setAssignedUsername(res.user.username);
+      // Brief pause so user sees their new username, then sign in
+      setTimeout(() => setToken(res.token), 2000);
     } catch (e) {
       Alert.alert('Registration failed', (e as Error).message);
-    } finally {
       setLoading(false);
     }
   };
 
+  if (assignedUsername) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={styles.logo}>🐧</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Welcome!</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Your anonymous username is</Text>
+        <View style={[styles.usernameBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.username, { color: colors.primary }]}>u/{assignedUsername}</Text>
+        </View>
+        <Text style={[styles.usernameNote, { color: colors.textSecondary }]}>
+          This is how others see you. You can never be identified from it.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={styles.logo}>🐧</Text>
       <Text style={[styles.title, { color: colors.text }]}>Create account</Text>
+      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        You'll be assigned a random anonymous username — like Reddit.
+      </Text>
+
       <TextInput
         style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
-        placeholder="Display name"
-        placeholderTextColor={colors.textSecondary}
-        value={displayName}
-        onChangeText={setDisplayName}
-      />
-      <TextInput
-        style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
-        placeholder="Email"
+        placeholder="Email address"
         placeholderTextColor={colors.textSecondary}
         value={email}
         onChangeText={setEmail}
@@ -59,13 +77,15 @@ export default function RegisterScreen({ navigation }: { navigation: { navigate:
         onChangeText={setPassword}
         secureTextEntry
       />
+
       <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.primary }]}
+        style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
         onPress={handleRegister}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>{loading ? 'Creating...' : 'Sign up'}</Text>
+        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>Create account</Text>}
       </TouchableOpacity>
+
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={[styles.link, { color: colors.primary }]}>Already have an account? Sign in</Text>
       </TouchableOpacity>
@@ -75,9 +95,14 @@ export default function RegisterScreen({ navigation }: { navigation: { navigate:
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, justifyContent: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 24 },
-  input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 12 },
-  button: { padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
-  buttonText: { color: '#fff', fontWeight: '600' },
-  link: { marginTop: 16, textAlign: 'center' },
+  logo: { fontSize: 48, textAlign: 'center', marginBottom: 12 },
+  title: { fontSize: 24, fontWeight: '800', textAlign: 'center', marginBottom: 6 },
+  subtitle: { fontSize: 13, textAlign: 'center', marginBottom: 24, lineHeight: 18 },
+  input: { borderWidth: 1.5, borderRadius: 10, padding: 13, fontSize: 15, marginBottom: 12 },
+  primaryBtn: { padding: 14, borderRadius: 10, alignItems: 'center', marginBottom: 14 },
+  primaryBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  link: { textAlign: 'center' },
+  usernameBox: { borderWidth: 1.5, borderRadius: 14, padding: 20, alignItems: 'center', marginVertical: 20 },
+  username: { fontSize: 22, fontWeight: '800', letterSpacing: 0.5 },
+  usernameNote: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
 });

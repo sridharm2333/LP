@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "UI Preview",
-      "runtimeExecutable": "npx.cmd",
-      "runtimeArgs": ["serve", "-p", "4321", "preview"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["preview/server.js"],
       "port": 4321
     }
   ]
