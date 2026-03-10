@@ -10,3 +10,5 @@ export { Report } from './Report';
 export { KindnessLog } from './KindnessLog';
 export { PeerMatch } from './PeerMatch';
 export { ModerationLog } from './ModerationLog';
+export { MoodEntry } from './MoodEntry';
+export { MatchMessage } from './MatchMessage';

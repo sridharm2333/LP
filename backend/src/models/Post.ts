@@ -7,7 +7,8 @@ export interface IPost extends Document {
   isAnonymous: boolean;
   content: string;
   emotionTags: EmotionTag[];
-  moodEmoji?: string; // simple scale e.g. 1-5 or emoji
+  moodEmoji?: string;
+  isUrgent: boolean;       // "I need support now" — floats to top of feed
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,6 +20,7 @@ const PostSchema = new Schema<IPost>(
     content: { type: String, required: true },
     emotionTags: [{ type: String, enum: ['sad', 'anxious', 'lonely', 'grief', 'heartbreak', 'hopeful', 'grateful', 'other'] }],
     moodEmoji: String,
+    isUrgent: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -10,7 +10,14 @@ import ProfileScreen from '../screens/ProfileScreen';
 const Tab = createBottomTabNavigator();
 
 function TabIcon({ name }: { name: string }) {
-  return <Text style={{ fontSize: 20 }}>{name === 'Feed' ? '📜' : name === 'Journey' ? '📅' : name === 'Groups' ? '👥' : name === 'Companion' ? '🐧' : '⚙️'}</Text>;
+  const icons: Record<string, string> = {
+    Feed: '📜',
+    Journey: '📅',
+    Groups: '👥',
+    'My Space': '🫶',
+    Profile: '⚙️',
+  };
+  return <Text style={{ fontSize: 20 }}>{icons[name] ?? '•'}</Text>;
 }
 
 export default function MainTabs() {
@@ -21,10 +28,10 @@ export default function MainTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Feed" component={FeedStack} options={{ title: 'Feed' }} />
+      <Tab.Screen name="Feed" component={FeedStack} />
       <Tab.Screen name="Journey" component={JourneyScreen} />
       <Tab.Screen name="Groups" component={GroupsStack} />
-      <Tab.Screen name="Companion" component={CompanionStack} options={{ title: 'Companion' }} />
+      <Tab.Screen name="My Space" component={CompanionStack} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

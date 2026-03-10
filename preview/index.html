@@ -123,6 +123,15 @@
   .post-date { font-size:10px; color:var(--text-secondary); margin-left:auto; }
   .warmth-pill { display:flex; align-items:center; gap:4px; border:1px solid var(--warmth); color:var(--warmth); border-radius:99px; padding:4px 10px; font-size:11px; font-weight:600; }
   .warmth-pill.active { background:var(--warmth); color:#fff; }
+  /* ── Inline reply ── */
+  .reply-toggle { display:none; }
+  .reply-btn { margin-left:auto; font-size:12px; font-weight:500; color:var(--text-secondary); cursor:pointer; padding:2px 6px; border-radius:6px; }
+  .reply-btn:hover { color:var(--primary); }
+  .reply-section { display:none; flex-direction:row; gap:8px; align-items:flex-end; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+  .reply-toggle:checked ~ .reply-section { display:flex; }
+  .reply-toggle:checked ~ .post-footer .reply-btn { color:var(--primary); }
+  .reply-input { flex:1; border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; background:var(--bg); color:var(--text); outline:none; resize:none; font-family:inherit; }
+  .reply-send { background:var(--primary); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
   .fab { position:absolute; right:16px; bottom:20px; background:var(--primary); color:#fff; border:none; border-radius:99px; padding:12px 20px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.2); z-index:5; text-decoration:none; display:inline-block; }
   .action-btn { display:block; width:100%; padding:14px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; border:none; margin-bottom:12px; text-align:center; text-decoration:none; }
   .btn-primary { background:var(--primary); color:#fff; }
@@ -282,7 +291,7 @@
   <label for="s-login"     class="page-btn">Login</label>
   <label for="s-feed"      class="page-btn">Feed</label>
   <label for="s-create"    class="page-btn">Create Post</label>
-  <label for="s-companion" class="page-btn">Companion</label>
+  <label for="s-companion" class="page-btn">My Space 🫶</label>
   <label for="s-journey"   class="page-btn">Journey</label>
   <label for="s-groups"    class="page-btn">Groups</label>
   <label for="s-circle"    class="page-btn">Penguin Circle</label>
@@ -332,7 +341,26 @@
     </div>
     <div style="height:10px"></div>
 
+    <div class="post-card" style="margin:6px 16px;border:2px solid #ef4444;">
+      <div style="background:#ef4444;margin:-16px -16px 12px;padding:8px 16px;border-radius:10px 10px 0 0">
+        <span style="color:#fff;font-weight:700;font-size:13px">🆘 Needs support right now</span>
+      </div>
+      <input type="checkbox" id="reply-urg" class="reply-toggle">
+      <div class="post-author">Anonymous</div>
+      <div class="post-content">I just had a really bad panic attack and I'm alone at home. I don't know what to do right now.</div>
+      <div class="post-footer">
+        <span class="emotion-tags" style="color:#ef4444">anxious · lonely</span>
+        <span class="post-date">just now</span>
+        <label for="reply-urg" class="reply-btn">💬 Reply</label>
+      </div>
+      <div class="reply-section">
+        <textarea class="reply-input" rows="2" placeholder="Send support..."></textarea>
+        <button class="reply-send" style="background:#ef4444">Send</button>
+      </div>
+    </div>
+
     <div class="post-card">
+      <input type="checkbox" id="reply-p1" class="reply-toggle">
       <div class="post-author">u/QuietWave4821</div>
       <div class="post-content">I haven't spoken to anyone in three days. Not sure why I'm writing this, but it feels less heavy now that I did.</div>
       <div class="post-footer">
@@ -340,10 +368,16 @@
         <span>😔</span>
         <span class="warmth-pill">🤍 12</span>
         <span class="post-date">Mar 6</span>
+        <label for="reply-p1" class="reply-btn">💬 3</label>
+      </div>
+      <div class="reply-section">
+        <textarea class="reply-input" rows="2" placeholder="Send warmth..."></textarea>
+        <button class="reply-send">Send</button>
       </div>
     </div>
 
     <div class="post-card">
+      <input type="checkbox" id="reply-p2" class="reply-toggle" checked>
       <div class="post-author">u/GentleMayor3301</div>
       <div class="post-content">Six months since the breakup. Some days I forget, and then I remember all at once. Progress is strange.</div>
       <div class="post-footer">
@@ -351,10 +385,16 @@
         <span>🌱</span>
         <span class="warmth-pill active">🤍 28</span>
         <span class="post-date">Mar 6</span>
+        <label for="reply-p2" class="reply-btn">💬 7</label>
+      </div>
+      <div class="reply-section">
+        <textarea class="reply-input" rows="2" placeholder="Send warmth..."></textarea>
+        <button class="reply-send">Send</button>
       </div>
     </div>
 
     <div class="post-card">
+      <input type="checkbox" id="reply-p3" class="reply-toggle">
       <div class="post-author">Anonymous</div>
       <div class="post-content">Lost my dad two months ago. The hardest part is still reaching for my phone to call him.</div>
       <div class="post-footer">
@@ -362,10 +402,16 @@
         <span>💙</span>
         <span class="warmth-pill">🤍 54</span>
         <span class="post-date">Mar 5</span>
+        <label for="reply-p3" class="reply-btn">💬 14</label>
+      </div>
+      <div class="reply-section">
+        <textarea class="reply-input" rows="2" placeholder="Send warmth..."></textarea>
+        <button class="reply-send">Send</button>
       </div>
     </div>
 
     <div class="post-card">
+      <input type="checkbox" id="reply-p4" class="reply-toggle">
       <div class="post-author">u/HopefulEmber8844</div>
       <div class="post-content">Finally went outside today. Just for 20 minutes. But I went.</div>
       <div class="post-footer">
@@ -373,6 +419,11 @@
         <span>🌤️</span>
         <span class="warmth-pill">🤍 89</span>
         <span class="post-date">Mar 5</span>
+        <label for="reply-p4" class="reply-btn">💬 22</label>
+      </div>
+      <div class="reply-section">
+        <textarea class="reply-input" rows="2" placeholder="Send warmth..."></textarea>
+        <button class="reply-send">Send</button>
       </div>
     </div>
 
@@ -430,18 +481,69 @@
 
   <!-- ── COMPANION ── -->
   <div class="screen screen-companion">
-    <div class="companion-center">
-      <div class="companion-penguin">🐧</div>
-      <div class="companion-title">Penguin Companion</div>
-      <div class="companion-sub">Gentle check-ins and encouragement</div>
-      <div class="message-box">
-        <div class="message-text">"You've been showing up every day, even when it's hard. That takes more courage than you know."</div>
+    <div class="screen-header">
+      <div class="screen-title">🐧 My Space</div>
+      <div style="display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px">
+        <span style="font-size:13px">🔥</span>
+        <span style="font-size:12px;font-weight:600;color:var(--primary)">7-day streak</span>
       </div>
-      <div class="streak-badge">🔥 7-day streak &nbsp;·&nbsp; Keep going</div>
-      <span class="action-btn btn-primary">Get a message</span>
-      <label for="s-peer" class="action-btn btn-outline">🤝 Find a peer match</label>
-      <label for="s-circle" class="action-btn btn-outline">🔵 Penguin Circle</label>
-      <span class="action-btn btn-outline">Daily check-in ✓</span>
+    </div>
+    <div style="padding:0 16px 16px">
+      <p style="font-size:12px;color:var(--text-secondary);margin-bottom:16px">Your private corner — no audience, just you.</p>
+
+      <!-- Mood check-in card -->
+      <div class="post-card" style="margin:0 0 14px">
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">How are you feeling today?</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <div style="flex:1;text-align:center;border:1.5px solid #22c55e;border-radius:10px;padding:8px 4px;cursor:pointer">
+            <div style="font-size:20px">😊</div>
+            <div style="font-size:10px;color:#22c55e;font-weight:600">Great</div>
+          </div>
+          <div style="flex:1;text-align:center;border:1.5px solid #f59e0b;border-radius:10px;padding:8px 4px;background:#f59e0b;cursor:pointer">
+            <div style="font-size:20px">😐</div>
+            <div style="font-size:10px;color:#fff;font-weight:600">Okay</div>
+          </div>
+          <div style="flex:1;text-align:center;border:1.5px solid #f97316;border-radius:10px;padding:8px 4px;cursor:pointer">
+            <div style="font-size:20px">😔</div>
+            <div style="font-size:10px;color:#f97316;font-weight:600">Rough</div>
+          </div>
+          <div style="flex:1;text-align:center;border:1.5px solid #ef4444;border-radius:10px;padding:8px 4px;cursor:pointer">
+            <div style="font-size:20px">😢</div>
+            <div style="font-size:10px;color:#ef4444;font-weight:600">Terrible</div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:8px;padding:10px;font-size:13px;color:var(--text-secondary);background:var(--bg);margin-bottom:10px">Add a note (optional)...</div>
+        <button class="action-btn btn-primary" style="margin-bottom:0">Save mood</button>
+      </div>
+
+      <!-- 7-day history -->
+      <div class="post-card" style="margin:0 0 14px">
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Last 7 days</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+          <div style="text-align:center"><div style="font-size:18px">😊</div><div style="font-size:10px;color:var(--text-secondary)">Mon</div><div style="width:6px;height:6px;border-radius:3px;background:#22c55e;margin:2px auto"></div></div>
+          <div style="text-align:center"><div style="font-size:18px">😐</div><div style="font-size:10px;color:var(--text-secondary)">Tue</div><div style="width:6px;height:6px;border-radius:3px;background:#f59e0b;margin:2px auto"></div></div>
+          <div style="text-align:center"><div style="font-size:18px">😔</div><div style="font-size:10px;color:var(--text-secondary)">Wed</div><div style="width:6px;height:6px;border-radius:3px;background:#f97316;margin:2px auto"></div></div>
+          <div style="text-align:center"><div style="font-size:18px">😢</div><div style="font-size:10px;color:var(--text-secondary)">Thu</div><div style="width:6px;height:6px;border-radius:3px;background:#ef4444;margin:2px auto"></div></div>
+          <div style="text-align:center"><div style="font-size:18px">😔</div><div style="font-size:10px;color:var(--text-secondary)">Fri</div><div style="width:6px;height:6px;border-radius:3px;background:#f97316;margin:2px auto"></div></div>
+          <div style="text-align:center"><div style="font-size:18px">😐</div><div style="font-size:10px;color:var(--text-secondary)">Sat</div><div style="width:6px;height:6px;border-radius:3px;background:#f59e0b;margin:2px auto"></div></div>
+          <div style="text-align:center"><div style="font-size:18px">😐</div><div style="font-size:10px;color:var(--text-secondary)">Sun</div><div style="width:6px;height:6px;border-radius:3px;background:#f59e0b;margin:2px auto"></div></div>
+        </div>
+        <div style="font-size:12px;color:#f97316;font-weight:500">💛 You've had a tough few days. Be gentle with yourself.</div>
+      </div>
+
+      <!-- Quick links -->
+      <div style="display:flex;gap:10px">
+        <div class="post-card" style="flex:1;margin:0;text-align:center;cursor:pointer">
+          <div style="font-size:26px;margin-bottom:6px">💬</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">Someone needs support</div>
+          <div style="font-size:11px;color:var(--primary);margin-top:2px">Go to feed →</div>
+        </div>
+        <div class="post-card" style="flex:1;margin:0;text-align:center;cursor:pointer">
+          <div style="font-size:26px;margin-bottom:6px">🤝</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">Talk 1-on-1</div>
+          <div style="font-size:11px;color:var(--primary);margin-top:2px">Find a peer →</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -558,6 +660,7 @@
         <div style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:10px">
           You've been matched. You can share thoughts, or just know someone out there understands.
         </div>
+        <button class="action-btn btn-primary" style="margin-top:8px">💬 Open Peer Chat</button>
         <span class="action-btn btn-outline" style="margin-bottom:0">End match</span>
       </div>
     </div>
@@ -613,7 +716,7 @@
   <div class="tab-bar">
     <label for="s-feed"      class="tab tab-feed">      <span class="icon">🏠</span><span class="label">Feed</span></label>
     <label for="s-journey"   class="tab tab-journey">   <span class="icon">📅</span><span class="label">Journey</span></label>
-    <label for="s-companion" class="tab tab-companion"> <span class="icon">🐧</span><span class="label">Companion</span></label>
+    <label for="s-companion" class="tab tab-companion"> <span class="icon">🐧</span><span class="label">My Space 🫶</span></label>
     <label for="s-groups"    class="tab tab-groups">    <span class="icon">👥</span><span class="label">Groups</span></label>
     <label for="s-profile"   class="tab tab-profile">   <span class="icon">👤</span><span class="label">Profile</span></label>
   </div>

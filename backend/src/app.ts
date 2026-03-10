@@ -9,6 +9,7 @@ import reportRoutes from './routes/reportRoutes';
 import userRoutes from './routes/userRoutes';
 import peerMatchRoutes from './routes/peerMatchRoutes';
 import moderationLogRoutes from './routes/moderationLogRoutes';
+import moodRoutes from './routes/moodRoutes';
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/peer-match', peerMatchRoutes);
 app.use('/api/moderation', moderationLogRoutes);
+app.use('/api/mood', moodRoutes);
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 

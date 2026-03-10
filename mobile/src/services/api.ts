@@ -53,7 +53,7 @@ export const postsApi = {
   },
   getMyPosts: () => api<{ posts: Post[] }>('/posts/my'),
   getById: (id: string) => api<Post>(`/posts/${id}`),
-  create: (body: { content: string; isAnonymous?: boolean; emotionTags?: string[]; moodEmoji?: string }) =>
+  create: (body: { content: string; isAnonymous?: boolean; emotionTags?: string[]; moodEmoji?: string; isUrgent?: boolean }) =>
     api<{ post: Post; groundingMessage?: string }>('/posts', { method: 'POST', body: JSON.stringify(body) }),
 };
 
@@ -88,18 +88,30 @@ export const userApi = {
   getProfile: () => api<UserProfile>('/user/profile'),
   updateProfile: (body: { midnightOceanEnabled?: boolean }) =>
     api<UserProfile>('/user/profile', { method: 'PATCH', body: JSON.stringify(body) }),
-  companionMessage: () => api<{ message: string }>('/user/companion-message'),
   checkIn: () => api<{ streak: number }>('/user/check-in', { method: 'POST' }),
   guidedPrompts: () => api<{ prompts: string[] }>('/user/guided-prompts'),
   softExit: () => api<{ message: string; deletionDate: string }>('/user/soft-exit', { method: 'POST' }),
   cancelExit: () => api<{ message: string }>('/user/cancel-exit', { method: 'POST' }),
 };
 
+export const moodApi = {
+  logMood: (body: { mood: MoodEntry['mood']; note?: string }) =>
+    api<{ entry: MoodEntry }>('/mood', { method: 'POST', body: JSON.stringify(body) }),
+  getRecent: () => api<{ entries: MoodEntry[] }>('/mood/recent'),
+};
+
 export const peerMatchApi = {
   request: (sharedTag: string) =>
     api<{ match: PeerMatch }>('/peer-match/request', { method: 'POST', body: JSON.stringify({ sharedTag }) }),
   my: () => api<{ match: PeerMatch | null }>('/peer-match/my'),
-  end: (matchId: string) => api<{ ok: boolean }>(`/peer-match/${matchId}/end`, { method: 'POST' }),
+  endMatch: (matchId: string) => api<{ ok: boolean }>(`/peer-match/${matchId}/end`, { method: 'POST' }),
+  sendMessage: (matchId: string, content: string) =>
+    api<{ message: MatchMessage }>(`/peer-match/${matchId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    }),
+  getMessages: (matchId: string) =>
+    api<{ messages: MatchMessage[]; myUserId: string }>(`/peer-match/${matchId}/messages`),
 };
 
 export const moderationApi = {
@@ -120,6 +132,8 @@ export interface Post {
   emotionTags?: string[];
   moodEmoji?: string;
   authorUsername?: string;
+  commentCount?: number;
+  isUrgent?: boolean;
   createdAt: string;
 }
 
@@ -155,6 +169,21 @@ export interface PeerMatch {
   status: 'pending' | 'active' | 'ended';
   sharedTag: string;
   endsAt?: string;
+}
+
+export interface MatchMessage {
+  _id: string;
+  matchId: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface MoodEntry {
+  _id: string;
+  mood: 'great' | 'okay' | 'rough' | 'terrible';
+  note?: string;
+  createdAt: string;
 }
 
 export interface ModerationLogEntry {
